@@ -1,0 +1,25 @@
+version: "3"
+
+volumes:
+  grafana_storage:
+
+networks:
+  logging_network:
+    external: true
+
+services:
+  grafana:
+    container_name: grafana
+    image: grafana/grafana-enterprise
+    environment:
+      ZOO_MY_ID: 1
+
+    networks:
+      - logging_network
+      
+    ports:
+      - 3000:3000
+      
+    volumes:
+      - grafana_storage:/opt/grafana
+

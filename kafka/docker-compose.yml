@@ -1,0 +1,29 @@
+version: "3"
+
+volumes:
+  kafka_storage:
+
+services:
+  kafka:
+    container_name: kafka
+    image: apache/kafka:3.7.1
+    environment:
+      - ARTEMIS_USER=yogen
+      - ARTEMIS_PASSWORD=dat1234
+    ports:
+      - 9092:9092
+    volumes:
+      - kafka_storage:/opt/kafka
+
+  magic:
+    image: "digitsy/kafka-magic"
+    ports:
+      - "8084:80"
+    volumes:
+      - kafka_storage:/opt/kafka-magic
+    # environment:
+    #   KMAGIC_ALLOW_TOPIC_DELETE: "true"
+    #   KMAGIC_ALLOW_SCHEMA_DELETE: "true"
+    #   KMAGIC_CONFIG_STORE_TYPE: "file"
+    #   KMAGIC_CONFIG_STORE_CONNECTION: "Data Source=/opt/kafka-magic/KafkaMagicConfig.db;"
+

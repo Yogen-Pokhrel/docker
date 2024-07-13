@@ -1,0 +1,23 @@
+version: "3"
+
+volumes:
+  database:
+
+services:
+  hsql_database:
+    container_name: hsql_db
+    image: blacklabelops/hsqldb
+    platform: linux/amd64
+    environment:
+#      - HSQLDB_TRACE=false
+#      - HSQLDB_SILENT=true
+      - HSQLDB_REMOTE=true
+      - HSQLDB_DATABASE_NAME=trainingdb
+      - HSQLDB_USER=yogen
+      - HSQLDB_PASSWORD=dat1234
+
+    ports:
+      - 9001:9001
+    volumes:
+      - database:/opt/database
+

@@ -1,0 +1,1 @@
+### This is a data scrapping tool, this can call endpoints or file in every provided interval and posts data to the provided database like elastic search
