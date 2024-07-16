@@ -1,0 +1,39 @@
+metricbeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  username: "elastic"
+  password: "yogen1234"
+  # index: "metricbeat-%{+yyyy.MM.dd}"
+
+# setup.template:
+#   name: "metricbeat"
+#   pattern: "metricbeat-*"
+
+setup.kibana:
+  host: "kibana:5601"
+
+metricbeat.modules:
+- module: prometheus
+  period: 10s
+  hosts: ["http://host.docker.internal:8080/actuator/prometheus"]
+  metrics_path: /metrics
+  namespace: "application"
+
+- module: docker
+  metricsets:
+    - 'container'
+    - 'cpu'
+    - 'diskio'
+    - 'event'
+    - 'healthcheck'
+    - 'info'
+    - 'image'
+    - 'memory'
+    - 'network'
+  hosts: ['unix:///var/run/docker.sock']
+  period: 10s
+  enabled: true
+

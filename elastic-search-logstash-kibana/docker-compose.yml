@@ -11,42 +11,60 @@ networks:
 services:
   elasticsearch:
     container_name: elasticsearch
-    image: elasticsearch:8.14.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
     environment:
-      ELASTIC_PASSWORD: yogen1234
-      vm.max_map_count: 262144
-      
+      - ELASTIC_PASSWORD=yogen1234
+      - "discovery.type=single-node"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     ports:
       - 9200:9200
       - 9300:9300
-
     networks:
       - elk_network
-      
     volumes:
       - elastic_storage:/usr/share/elasticsearch/data
 
-  logstash:
-    container_name: logstash
-    image: logstash:8.14.3
-
-
-    networks:
-      - elk_network
-
-    volumes:
-      - logstash_storage:/usr/share/logstash/
-      # - ../../MIU/Courses/EA-Rene Dejong/Assignments/project/kube/logs/:/usr/share/data/:ro
-      # - ./logstash.conf:/usr/share/logstash/config/
-
-  
   kibana:
     container_name: kibana
-    image: kibana:8.14.3
+    image: docker.elastic.co/kibana/kibana:8.14.3
+    environment:
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=yogen1234
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
       - 5601:5601
     networks:
       - elk_network
+    depends_on:
+      - elasticsearch
     volumes:
       - kibana_storage:/usr/share/kibana
 
+  metricbeat:
+    container_name: metricbeat
+    image: docker.elastic.co/beats/metricbeat:8.14.3
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=yogen1234
+    networks:
+      - elk_network
+    depends_on:
+      - elasticsearch
+
+  logstash:
+    container_name: logstash
+    image: docker.elastic.co/logstash/logstash:8.14.3
+    networks:
+      - elk_network
+    volumes:
+      - logstash_storage:/usr/share/logstash/
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+      - /Users/yallahproperty/Documents/Personal/MIU/Courses/EA-Rene Dejong/Assignments/project/kube/logs/:/usr/share/data/logs/:ro
