@@ -21,6 +21,7 @@ metricbeat.modules:
   hosts: ["http://host.docker.internal:8080/actuator/prometheus"]
   metrics_path: /metrics
   namespace: "application"
+  enabled: false
 
 - module: docker
   metricsets:

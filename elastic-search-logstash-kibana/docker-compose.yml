@@ -2,7 +2,7 @@ version: "3"
 
 volumes:
   elastic_storage:
-  logstash_storage:
+  logstash_storage__str:
   kibana_storage:
 
 networks:
@@ -64,7 +64,11 @@ services:
     image: docker.elastic.co/logstash/logstash:8.14.3
     networks:
       - elk_network
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=yogen1234
     volumes:
-      - logstash_storage:/usr/share/logstash/
+      - logstash_storage__str:/usr/share/logstash/
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
       - /Users/yallahproperty/Documents/Personal/MIU/Courses/EA-Rene Dejong/Assignments/project/kube/logs/:/usr/share/data/logs/:ro
